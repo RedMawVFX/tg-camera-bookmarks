@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter.filedialog import asksaveasfile
 import re
 import terragen_rpc as tg
 
@@ -200,11 +201,10 @@ def apply_bookmark():
     set_camera_params(camera_selection,rb_selection-1)
     build_message("apply",rb_selection-1,camera_selection)  
     
-def save_bookmarks_to_disk():
-    file = open('bookmarks.txt','w') 
-    # print("at write bookmarks is",bookmarks)   
-    x = str(bookmarks)
-    # print ("x is ",x)
+def save_bookmarks_to_disk():    
+    my_filetypes = [("Text document","*.txt"),("All files","*.*")]
+    file = asksaveasfile(filetypes= my_filetypes, defaultextension=my_filetypes)    
+    x = str(bookmarks)    
     file.write(x)
     file.close()
     build_message("saved"," "," ")
