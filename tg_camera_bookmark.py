@@ -10,10 +10,8 @@ import terragen_rpc as tg
 # wip working version 
 
 
-def display_bookmarks():
-    print ("Current bookmark values are")
-    print (bookmarks)
-    print (" ")
+def display_bookmarks():    
+    popup_info("Bookmark values",bookmarks)
 
 ''' def reset_bookmarks(x):
     global bookmarks
@@ -30,21 +28,26 @@ gui = Tk()
 gui.title("tg_camera_bookmark")
 gui.geometry("600x500")
 
-frame0 = LabelFrame(gui,text="Select radio button to store a bookmark")
-frame1 = LabelFrame(gui,text="Select camera to capture bookmark data")
-frame2 = LabelFrame(gui,text="Select camera to apply bookmark data")
-# frame3 = LabelFrame(gui,text="Save / Load bookmarks to disk")
-frame4 = LabelFrame(gui,text="Messages")
+gui.columnconfigure(0,weight=1)
+gui.columnconfigure(1,weight=2)
 
-frame0.grid(row=0,column=0,padx=10)
-frame1.grid(row=1, column=0)
-frame2.grid(row=2, column=0)
-# frame3.grid(row=3,column=0)
-frame4.grid(row=4,column=0)
+gui.rowconfigure(0,weight=1)
+gui.rowconfigure(1,weight=1)
+gui.rowconfigure(2,weight=1)
+gui.rowconfigure(3,weight=4)
+
+
+frame0 = LabelFrame(gui,text="Select active bookmark")
+frame1 = LabelFrame(gui,text="Copy bookmark from")
+frame2 = LabelFrame(gui,text="Apply bookmark to")
+frame3 = LabelFrame(gui,text="Messages:",bg="#FFF9EC",relief=FLAT)
+
+frame0.grid(row=0,column=0,sticky="WENS",padx=10,pady=10)
+frame1.grid(row=1, column=0,sticky="WENS",padx=10,pady=10)
+frame2.grid(row=2, column=0,sticky="WENS",padx=10,pady=10)
+frame3.grid(row=3,column=0,sticky="WENS",padx=10,pady=10)
 
 project = tg.root()
-
-
 
 error_table = {
 1: "Terragen RPC connection error",
@@ -78,6 +81,8 @@ def update_combobox_cameras():
     apply_camera_cb["values"] = list(camera_dictionary.values())
     apply_camera_cb.current(0)
 
+def popup_info(message_title,message_description):
+    messagebox.showinfo(title=message_title,message=message_description)
 
 def popup_message(message_type,message_description):
     messagebox.showwarning(title=error_table[message_type], message = message_description)
@@ -204,21 +209,21 @@ def save_bookmarks_to_disk():
 def load_bookmarks_from_disk():
     global bookmarks
     presets_from_disk = read_from_file()
-    print("Presets from disk ")
-    print(presets_from_disk)
-    print(" ")
+    # print("Presets from disk ")
+    # print(presets_from_disk)
+    # print(" ")
     # format
     formatted_presets = format_presets_from_disk(presets_from_disk)
-    print ("type of varialbe for formatted_presets is")
-    print(type(formatted_presets))
-    print ("length is ",len(formatted_presets))
-    print (" ")
+    # print ("type of varialbe for formatted_presets is")
+    # print(type(formatted_presets))
+    # print ("length is ",len(formatted_presets))
+    # print (" ")
     # print("Bookmarks BEFORE ")
     # print(bookmarks)
     # print(" ")    
     bookmarks = formatted_presets
-    print("Bookmarks AFTER ")
-    print(bookmarks)
+    # print("Bookmarks AFTER ")
+    # print(bookmarks)
     # don't know
     ''' if presets_from_disk:
         x.clear()
@@ -231,9 +236,9 @@ def format_presets_from_disk(presets):
     pattern = r"\(.*?\)"
     matches = re.findall(pattern,converted_string)
     extracted_elements = [eval(match) for match in matches]
-    print("Extracted elements ")
-    print (extracted_elements)
-    print (" ")
+    # print("Extracted elements ")
+    # print (extracted_elements)
+    # print (" ")
     return extracted_elements
                     
 def read_from_file():    
@@ -256,6 +261,7 @@ default_focal = '31.1769'
 bookmarks = [(default_position,default_rotation,default_focal)] * 10
 # print ("on creation bookmarks is type of ",type(bookmarks))
 my_messages =StringVar()
+my_messages.set("Welcome.  ")
 
 # menu bar
 menubar = Menu(gui)
@@ -265,7 +271,7 @@ filemenu.add_command(label="Save bookmarks...",command = save_bookmarks_to_disk)
 menubar.add_cascade(label="File",menu=filemenu)
 
 utilitymenu = Menu(menubar,tearoff=0)
-utilitymenu.add_command(label = "Display boomkarks", command=display_bookmarks)
+utilitymenu.add_command(label = "Display bookmarks", command=display_bookmarks)
 # utilitymenu.add_command(label="Reset Bookmark position",command=reset_bookmarks(1))
 menubar.add_cascade(label="Utility",menu=utilitymenu)
 
@@ -298,8 +304,8 @@ bookmark_10_rb = Radiobutton(frame0,text="Bookmark 10",variable=bookmark_rb,valu
 
 
 # labels and combobox
-acquire_instructions = Label(frame1,text='Copy coordinates from this camera / Click to refresh list.',relief = FLAT,padx=20,pady=10).grid(row = 0,column=0,sticky='w')
-apply_instructions = Label(frame2,text='Apply coordinates to this camera / Click to refresh list.',relief = FLAT,padx=20,pady=10).grid(row = 0,column=0,sticky='w')
+acquire_instructions = Label(frame1,text='Select camera or refresh list.',relief = FLAT,padx=20,pady=10).grid(row = 0,column=0,sticky='w')
+apply_instructions = Label(frame2,text='Select camera or refresh list.',relief = FLAT,padx=20,pady=10).grid(row = 0,column=0,sticky='w')
 
 acquire_camera_cb = ttk.Combobox(frame1,textvariable=acquire_from_camera,postcommand=update_combobox_cameras)
 acquire_camera_cb["values"] = list(camera_dictionary.values())
@@ -311,14 +317,14 @@ apply_camera_cb["values"] = list(camera_dictionary.values())
 apply_camera_cb.current(0)
 apply_camera_cb.grid(row=0,column=1)
 
-info_message = Label(frame4,textvariable=my_messages,fg='red').grid(row=0,columnspan=2,sticky='wens')
+null = Label(frame1,text=" ").grid(row=3,columnspan=2)
+null_02 = Label(frame2,text=" ").grid(row=3,columnspan=2)
+
+info_message = Label(frame3,textvariable=my_messages,fg='red',bg="#FFF9EC",padx=4).grid(row=0,columnspan=2,sticky='wens')
 
 # buttons
-acquire_camera_button = Button(frame1,text="Bookmark this",bg='red',command=acquire_bookmark).grid(row=2,column=0,sticky='w')
-apply_camera_button = Button(frame2,text="Apply bookmark",bg='green',command=apply_bookmark).grid(row=2,column=0,sticky='w')
-
-# save_bookmarks = Button(frame3,text="Save bookmark",bg='yellow',command=save_bookmarks_to_disk).grid(row=0,column=0,sticky='w')
-# load_bookmarks = Button(frame3,text="Load bookmarks",bg='cyan',command=load_bookmarks_from_disk).grid(row=0,column=1,sticky='w')
+acquire_camera_button = Button(frame1,text="COPY bookmark",bg="#BED5F4",command=acquire_bookmark,padx=10,pady=5).grid(row=2,column=0)
+apply_camera_button = Button(frame2,text="APPLY bookmark",bg='#BEF4C2',command=apply_bookmark,padx=10,pady=5).grid(row=2,column=0)
 
 gui.config(menu=menubar)
 gui.mainloop()
