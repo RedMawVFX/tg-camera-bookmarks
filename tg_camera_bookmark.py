@@ -6,23 +6,29 @@ from tkinter.filedialog import askopenfile
 import re
 import terragen_rpc as tg
 
-# Notes
-# wip working version 
-
-
 def display_bookmarks():    
     popup_info("Bookmark values",bookmarks)
 
-''' def reset_bookmarks(x):
+def reset_bookmarks():
+    # Python drops to global if local vars not defined
     global bookmarks
-    reset_position = default_position.get()
-    # reset_rotatation = default_rotation.get()
-    # reset_focal = default_focal.get()
-    rb_to_reset = bookmark_rb.get()
-    # 0 all, 1 pos, 2 rot, 3 focal
-    if x == 1:
-        bookmarks[rb_to_reset][1] = reset_position
-'''
+    bookmarks = [(default_position,default_rotation,default_focal)] * 10
+    my_messages.set("Bookmarks reset to default values.")
+
+def reset_bookmarks_zero(): 
+    global bookmarks
+    zero = '0 0 0'   
+    bookmarks = [(zero,zero,default_focal)] * 10
+    my_messages.set("Bookmarks rest to 0,0,0")
+
+def popup_help_file_menu():
+    text = "Open bookmarks: Replaces all existing bookmarks with values loaded from file. \nSave bookmarks: Saves all current bookmark values to a file."
+    popup_info("Help for File menu", text)
+
+def popup_help_utility_menu():
+    text = "Display bookmarks: Displays the current values assigned to all the bookmarks. \nRest bookmarks: Resets all bookmarks to default render camera values. \nReset bookmarks to zero: Resets all bookmark postion and rotation values to zero."  
+    popup_info("Help for Utility menu",text)  
+        
 
 gui = Tk()
 gui.title("tg_camera_bookmark")
@@ -35,7 +41,6 @@ gui.rowconfigure(0,weight=1)
 gui.rowconfigure(1,weight=1)
 gui.rowconfigure(2,weight=1)
 gui.rowconfigure(3,weight=4)
-
 
 frame0 = LabelFrame(gui,text="Select active bookmark")
 frame1 = LabelFrame(gui,text="Copy bookmark from")
@@ -57,8 +62,6 @@ error_table = {
 5: "Terragen RPC attribute error"
 }
 
-
-
 def get_cameras():
     try:
         node_ids = tg.children_filtered_by_class(project,'camera')
@@ -73,8 +76,7 @@ def get_cameras():
         popup_message(4,str(e))
 
 def update_combobox_cameras():
-    r = get_cameras()
-    # print ("r is ",r)
+    r = get_cameras()    
     create_camera_dictionary(r)
     acquire_camera_cb["values"] = list(camera_dictionary.values())
     acquire_camera_cb.current(0)
@@ -119,34 +121,16 @@ def create_camera_dictionary(ids):
         except tg.ApiError:
             popup_message(4,str(e))
 
-
 def set_bookmark_rb():
-    x = bookmark_rb.get()
-    # print("bookmark_rb is set to ",x)
+    x = bookmark_rb.get()    
 
-def acquire_bookmark():    
-    # get params from selected camera    
+def acquire_bookmark():
     camera_params_as_list = []
-    rb_selection = bookmark_rb.get()
-    # print("rb_selection is ",rb_selection)
+    rb_selection = bookmark_rb.get()    
     camera_selection = acquire_from_camera.get()
-    # print("camera_selection is ",camera_selection)
-    selected_camera_position, selected_camera_rotation, selected_camera_focal = get_camera_params(camera_selection)
-    # print("camera pos is ",selected_camera_position)
-    # print("camera rot is ",selected_camera_rotation)
-    # print("camaera foc is ",selected_camera_focal)
-    
-    camera_params_as_string = str(selected_camera_position),str(selected_camera_rotation),str(selected_camera_focal)
-    # print ("camera_params_as_string ",camera_params_as_string)
-    #
-    # print ("Element 0 is ", bookmarks[0])
-    # print ("Element 1 is ",bookmarks[1])
-    # print("Element 2 is ",bookmarks[2])
-    # store the parms to the selected preset radio button
-    # print (bookmarks)
+    selected_camera_position, selected_camera_rotation, selected_camera_focal = get_camera_params(camera_selection)    
+    camera_params_as_string = str(selected_camera_position),str(selected_camera_rotation),str(selected_camera_focal)    
     bookmarks[rb_selection-1] = camera_params_as_string
-    # print ("after ", bookmarks )
-    # working up to here
     build_message("acquire",rb_selection,camera_selection)    
 
 def build_message(x,rb,cam):
@@ -163,38 +147,47 @@ def build_message(x,rb,cam):
         y = "Bookmarks saved to disk "
         my_messages.set(y)
 
-
 def get_camera_params(x):
-    node = tg.node_by_path(x)
-    pos = node.get_param('position')
-    rot = node.get_param('rotation')
-    foc = node.get_param('focal_length_in_mm') 
-    return pos,rot,foc
+    try:
+        node = tg.node_by_path(x)
+        pos = node.get_param('position')
+        rot = node.get_param('rotation')
+        foc = node.get_param('focal_length_in_mm') 
+        return pos,rot,foc
+    except ConnectionError as e:
+        popup_message(1,str(e))
+    except TimeoutError as e:
+        popup_message(2,str(e))
+    except tg.ReplyError as e:
+        popup_message(3,str(e))
+    except tg.ApiError:
+        popup_message(4,str(e))
 
-def set_camera_params(cam,book):
-    # print("line 135 cam is ",cam)
-    # print("line 136 book is",book)
-    # print("line 137 bookmarks are ",bookmarks)
+def set_camera_params(cam,book):    
     preset = bookmarks[book]
-    # print ("preset is ",preset)
-    node = tg.node_by_path(cam)
-    # works to here
-    node.set_param('position',preset[0])
-    node.set_param('rotation',preset[1])
-    node.set_param('focal_length_in_mm',preset[2])    
+    try:
+        node = tg.node_by_path(cam)    
+        node.set_param('position',preset[0])
+        node.set_param('rotation',preset[1])
+        node.set_param('focal_length_in_mm',preset[2])
+    except ConnectionError as e:
+        popup_message(1,str(e))
+    except TimeoutError as e:
+        popup_message(2,str(e))
+    except tg.ReplyError as e:
+        popup_message(3,str(e))
+    except tg.ApiError:
+        popup_message(4,str(e))
     
-def print_bookmark_data(x,y,z):
+def print_bookmark_data(x,y,z): # old
     for i in range(10):
        print ("position is ",x)
        print ("rotaion is ",y)
        print ("focual is ",z)
 
-def apply_bookmark():
-    # think of this as the master function - it can call sub functions to do stuff
-    rb_selection = bookmark_rb.get()
-    # print("rb_selection is ",rb_selection)    
-    camera_selection = apply_to_camera.get()
-    # print ("camera_selection is ",camera_selection)
+def apply_bookmark():    
+    rb_selection = bookmark_rb.get()    
+    camera_selection = apply_to_camera.get()    
     set_camera_params(camera_selection,rb_selection-1)
     build_message("apply",rb_selection-1,camera_selection)  
     
@@ -208,37 +201,16 @@ def save_bookmarks_to_disk():
 
 def load_bookmarks_from_disk():
     global bookmarks
-    presets_from_disk = read_from_file()
-    # print("Presets from disk ")
-    # print(presets_from_disk)
-    # print(" ")
-    # format
-    formatted_presets = format_presets_from_disk(presets_from_disk)
-    # print ("type of varialbe for formatted_presets is")
-    # print(type(formatted_presets))
-    # print ("length is ",len(formatted_presets))
-    # print (" ")
-    # print("Bookmarks BEFORE ")
-    # print(bookmarks)
-    # print(" ")    
-    bookmarks = formatted_presets
-    # print("Bookmarks AFTER ")
-    # print(bookmarks)
-    # don't know
-    ''' if presets_from_disk:
-        x.clear()
-        x = presets_from_disk
-        build_message("loaded"," "," ")    '''
+    presets_from_disk = read_from_file()    
+    formatted_presets = format_presets_from_disk(presets_from_disk)    
+    bookmarks = formatted_presets   
     
 
 def format_presets_from_disk(presets):
     converted_string = str(presets)
     pattern = r"\(.*?\)"
     matches = re.findall(pattern,converted_string)
-    extracted_elements = [eval(match) for match in matches]
-    # print("Extracted elements ")
-    # print (extracted_elements)
-    # print (" ")
+    extracted_elements = [eval(match) for match in matches]    
     return extracted_elements
                     
 def read_from_file():    
@@ -259,7 +231,6 @@ default_position = '0 10 -30'
 default_rotation = '-7 0 0'
 default_focal = '31.1769'
 bookmarks = [(default_position,default_rotation,default_focal)] * 10
-# print ("on creation bookmarks is type of ",type(bookmarks))
 my_messages =StringVar()
 my_messages.set("Welcome.  ")
 
@@ -272,9 +243,16 @@ menubar.add_cascade(label="File",menu=filemenu)
 
 utilitymenu = Menu(menubar,tearoff=0)
 utilitymenu.add_command(label = "Display bookmarks", command=display_bookmarks)
-# utilitymenu.add_command(label="Reset Bookmark position",command=reset_bookmarks(1))
+utilitymenu.add_separator()
+utilitymenu.add_command(label="Reset bookmarks",command=reset_bookmarks)
+utilitymenu.add_command(label="Reset bookmarks to zero",command=reset_bookmarks_zero)
 menubar.add_cascade(label="Utility",menu=utilitymenu)
 
+helpmenu = Menu(menubar,tearoff=0)
+# At a later date, combine these help options into a single function or two
+helpmenu.add_command(label="For file menu",command=popup_help_file_menu)
+helpmenu.add_command(label="For utility menu",command=popup_help_utility_menu)
+menubar.add_cascade(label="Help",menu=helpmenu)
 
 # main
 camera_ids = get_cameras()
@@ -286,8 +264,6 @@ if not camera_ids:
         quit()
 # build camera dictionary
 create_camera_dictionary(camera_ids)
-
-
 
 # radio buttons
 bookmark_01_rb = Radiobutton(frame0,text="Bookmark 01",variable=bookmark_rb,value=1,command=set_bookmark_rb).grid(row=0,column=0)
