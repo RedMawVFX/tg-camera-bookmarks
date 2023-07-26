@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter.filedialog import asksaveasfile
+from tkinter.filedialog import askopenfile
 import re
 import terragen_rpc as tg
 
@@ -244,10 +245,9 @@ def format_presets_from_disk(presets):
     print (" ")
     return extracted_elements
                     
-
-
-def read_from_file():
-    file = open(r'bookmarks.txt','r')
+def read_from_file():    
+    my_filetypes = [("Text document","*.txt"),("All files","*.*")]
+    file = askopenfile(mode='r',filetypes= my_filetypes)
     content = file.read()    
     file.close()
     return content
