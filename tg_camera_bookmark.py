@@ -33,27 +33,18 @@ gui.geometry("600x500")
 frame0 = LabelFrame(gui,text="Select radio button to store a bookmark")
 frame1 = LabelFrame(gui,text="Select camera to capture bookmark data")
 frame2 = LabelFrame(gui,text="Select camera to apply bookmark data")
-frame3 = LabelFrame(gui,text="Save / Load bookmarks to disk")
+# frame3 = LabelFrame(gui,text="Save / Load bookmarks to disk")
 frame4 = LabelFrame(gui,text="Messages")
 
 frame0.grid(row=0,column=0,padx=10)
 frame1.grid(row=1, column=0)
 frame2.grid(row=2, column=0)
-frame3.grid(row=3,column=0)
+# frame3.grid(row=3,column=0)
 frame4.grid(row=4,column=0)
 
 project = tg.root()
 
 
-
-
-
-# menu bar
-menubar = Menu(gui)
-utilitymenu = Menu(menubar,tearoff=0)
-utilitymenu.add_command(label = "Display boomkarks", command=display_bookmarks)
-# utilitymenu.add_command(label="Reset Bookmark position",command=reset_bookmarks(1))
-menubar.add_cascade(label="Utility",menu=utilitymenu)
 
 error_table = {
 1: "Terragen RPC connection error",
@@ -263,8 +254,20 @@ default_position = '0 10 -30'
 default_rotation = '-7 0 0'
 default_focal = '31.1769'
 bookmarks = [(default_position,default_rotation,default_focal)] * 10
-print ("on creation bookmarks is type of ",type(bookmarks))
+# print ("on creation bookmarks is type of ",type(bookmarks))
 my_messages =StringVar()
+
+# menu bar
+menubar = Menu(gui)
+filemenu = Menu(menubar,tearoff=0)
+filemenu.add_command(label="Open bookmarks...",command=load_bookmarks_from_disk)
+filemenu.add_command(label="Save bookmarks...",command = save_bookmarks_to_disk)
+menubar.add_cascade(label="File",menu=filemenu)
+
+utilitymenu = Menu(menubar,tearoff=0)
+utilitymenu.add_command(label = "Display boomkarks", command=display_bookmarks)
+# utilitymenu.add_command(label="Reset Bookmark position",command=reset_bookmarks(1))
+menubar.add_cascade(label="Utility",menu=utilitymenu)
 
 
 # main
@@ -277,6 +280,8 @@ if not camera_ids:
         quit()
 # build camera dictionary
 create_camera_dictionary(camera_ids)
+
+
 
 # radio buttons
 bookmark_01_rb = Radiobutton(frame0,text="Bookmark 01",variable=bookmark_rb,value=1,command=set_bookmark_rb).grid(row=0,column=0)
@@ -312,8 +317,8 @@ info_message = Label(frame4,textvariable=my_messages,fg='red').grid(row=0,column
 acquire_camera_button = Button(frame1,text="Bookmark this",bg='red',command=acquire_bookmark).grid(row=2,column=0,sticky='w')
 apply_camera_button = Button(frame2,text="Apply bookmark",bg='green',command=apply_bookmark).grid(row=2,column=0,sticky='w')
 
-save_bookmarks = Button(frame3,text="Save bookmark",bg='yellow',command=save_bookmarks_to_disk).grid(row=0,column=0,sticky='w')
-load_bookmarks = Button(frame3,text="Load bookmarks",bg='cyan',command=load_bookmarks_from_disk).grid(row=0,column=1,sticky='w')
+# save_bookmarks = Button(frame3,text="Save bookmark",bg='yellow',command=save_bookmarks_to_disk).grid(row=0,column=0,sticky='w')
+# load_bookmarks = Button(frame3,text="Load bookmarks",bg='cyan',command=load_bookmarks_from_disk).grid(row=0,column=1,sticky='w')
 
 gui.config(menu=menubar)
 gui.mainloop()
