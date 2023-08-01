@@ -52,8 +52,6 @@ frame1.grid(row=1, column=0,sticky="WENS",padx=10,pady=10)
 frame2.grid(row=2, column=0,sticky="WENS",padx=10,pady=10)
 frame3.grid(row=3,column=0,sticky="WENS",padx=10,pady=10)
 
-project = tg.root()
-
 error_table = {
 1: "Terragen RPC connection error",
 2: "Terragen RPC timeout error",
@@ -64,6 +62,7 @@ error_table = {
 
 def get_cameras():
     try:
+        project = tg.root()
         node_ids = tg.children_filtered_by_class(project,'camera')
         return(node_ids)
     except ConnectionError as e:
@@ -96,6 +95,7 @@ def popup_add_camera(message_type,message_description):
 
 def add_camera():
     try:
+        project = tg.root()
         tg.create_child(project,'camera')
     except ConnectionError as e:
         popup_message(1,str(e))
