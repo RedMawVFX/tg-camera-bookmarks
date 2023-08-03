@@ -32,22 +32,27 @@ def popup_help_utility_menu():
 
 gui = Tk()
 gui.title("tg_camera_bookmark")
-gui.geometry("600x500")
+gui.geometry("475x500")
 
-gui.columnconfigure(0,weight=1)
-gui.columnconfigure(1,weight=2)
+gui.columnconfigure(0,weight=2)
+gui.columnconfigure(1,weight=1)
+gui.columnconfigure(2,weight=1)
+gui.columnconfigure(3,weight=1)
+gui.columnconfigure(4,weight=1)
+gui.columnconfigure(5,weight=1)
 
-gui.rowconfigure(0,weight=1)
+
+gui.rowconfigure(0,weight=0)
 gui.rowconfigure(1,weight=1)
 gui.rowconfigure(2,weight=1)
 gui.rowconfigure(3,weight=4)
 
-frame0 = LabelFrame(gui,text="Select active bookmark")
-frame1 = LabelFrame(gui,text="Copy bookmark from")
-frame2 = LabelFrame(gui,text="Apply bookmark to")
+# frame0 = LabelFrame(gui,text="Select active bookmark")
+frame1 = LabelFrame(gui,text="Select camera to copy bookmark from")
+frame2 = LabelFrame(gui,text="Select camera to apply bookmark to")
 frame3 = LabelFrame(gui,text="Messages:",bg="#FFF9EC",relief=FLAT)
 
-frame0.grid(row=0,column=0,sticky="WENS",padx=10,pady=10)
+# frame0.grid(row=0,column=0,sticky="WENS",padx=10,pady=10)
 frame1.grid(row=1, column=0,sticky="WENS",padx=10,pady=10)
 frame2.grid(row=2, column=0,sticky="WENS",padx=10,pady=10)
 frame3.grid(row=3,column=0,sticky="WENS",padx=10,pady=10)
@@ -131,11 +136,11 @@ def acquire_bookmark():
     selected_camera_position, selected_camera_rotation, selected_camera_focal = get_camera_params(camera_selection)    
     camera_params_as_string = str(selected_camera_position),str(selected_camera_rotation),str(selected_camera_focal)    
     bookmarks[rb_selection-1] = camera_params_as_string
-    build_message("acquire",rb_selection,camera_selection)    
+    build_message("acquire",rb_selection,camera_selection)  
 
 def build_message(x,rb,cam):
     if x == "acquire":
-        y = str(cam) + " applied to bookmark " + str(rb) + " "
+        y = str(cam) + " copied to bookmark " + str(rb) + " "
         my_messages.set(y)
     elif x == "apply":
         y = "Bookmark " + str(rb+1) + " applied to " +str (cam) + " "
@@ -220,6 +225,21 @@ def read_from_file():
     file.close()
     return content
 
+def copy_bookmark(x):
+    # print("x is ",x)
+    bookmark_rb.set(x)
+    camera_selection = acquire_from_camera.get()
+    selected_camera_position, selected_camera_rotation, selected_camera_focal = get_camera_params(camera_selection)    
+    camera_params_as_string = str(selected_camera_position),str(selected_camera_rotation),str(selected_camera_focal)    
+    bookmarks[x-1] = camera_params_as_string
+    # print("copy ",x," ",camera_selection)
+    build_message("acquire",x,camera_selection) 
+
+def paste_bookmark(x):     
+    camera_selection = apply_to_camera.get()    
+    set_camera_params(camera_selection,x-1)
+    build_message("apply",x-1,camera_selection) 
+
 
 # variables
 camera_dictionary = {}
@@ -266,6 +286,7 @@ if not camera_ids:
 create_camera_dictionary(camera_ids)
 
 # radio buttons
+'''
 bookmark_01_rb = Radiobutton(frame0,text="Bookmark 01",variable=bookmark_rb,value=1,command=set_bookmark_rb).grid(row=0,column=0)
 bookmark_02_rb = Radiobutton(frame0,text="Bookmark 02",variable=bookmark_rb,value=2,command=set_bookmark_rb).grid(row=0,column=1)
 bookmark_03_rb = Radiobutton(frame0,text="Bookmark 03",variable=bookmark_rb,value=3,command=set_bookmark_rb).grid(row=0,column=2)
@@ -277,21 +298,22 @@ bookmark_07_rb = Radiobutton(frame0,text="Bookmark 07",variable=bookmark_rb,valu
 bookmark_08_rb = Radiobutton(frame0,text="Bookmark 08",variable=bookmark_rb,value=8,command=set_bookmark_rb).grid(row=1,column=2)
 bookmark_09_rb = Radiobutton(frame0,text="Bookmark 09",variable=bookmark_rb,value=9,command=set_bookmark_rb).grid(row=1,column=3)
 bookmark_10_rb = Radiobutton(frame0,text="Bookmark 10",variable=bookmark_rb,value=10,command=set_bookmark_rb).grid(row=1,column=4)
+'''
 
 
 # labels and combobox
-acquire_instructions = Label(frame1,text='Select camera or refresh list.',relief = FLAT,padx=20,pady=10).grid(row = 0,column=0,sticky='w')
-apply_instructions = Label(frame2,text='Select camera or refresh list.',relief = FLAT,padx=20,pady=10).grid(row = 0,column=0,sticky='w')
+# acquire_instructions = Label(frame1,text='Select camera or refresh list.',relief = FLAT,padx=20,pady=10).grid(row = 0,column=3,columnspan=2,sticky='e')
+# apply_instructions = Label(frame2,text='Select camera or refresh list.',relief = FLAT,padx=20,pady=10).grid(row = 0,column=3,sticky='e')
 
 acquire_camera_cb = ttk.Combobox(frame1,textvariable=acquire_from_camera,postcommand=update_combobox_cameras)
 acquire_camera_cb["values"] = list(camera_dictionary.values())
 acquire_camera_cb.current(0)
-acquire_camera_cb.grid(row=0,column=1)
+acquire_camera_cb.grid(row=0,column=0,sticky='e',padx=5,pady=5)
 
 apply_camera_cb = ttk.Combobox(frame2,textvariable=apply_to_camera,postcommand=update_combobox_cameras)
 apply_camera_cb["values"] = list(camera_dictionary.values())
 apply_camera_cb.current(0)
-apply_camera_cb.grid(row=0,column=1)
+apply_camera_cb.grid(row=0,column=0,sticky='e',padx=5,pady=5)
 
 null = Label(frame1,text=" ").grid(row=3,columnspan=2)
 null_02 = Label(frame2,text=" ").grid(row=3,columnspan=2)
@@ -299,8 +321,34 @@ null_02 = Label(frame2,text=" ").grid(row=3,columnspan=2)
 info_message = Label(frame3,textvariable=my_messages,fg='red',bg="#FFF9EC",padx=4).grid(row=0,columnspan=2,sticky='wens')
 
 # buttons
-acquire_camera_button = Button(frame1,text="COPY bookmark",bg="#BED5F4",command=acquire_bookmark,padx=10,pady=5).grid(row=2,column=0)
-apply_camera_button = Button(frame2,text="APPLY bookmark",bg='#BEF4C2',command=apply_bookmark,padx=10,pady=5).grid(row=2,column=0)
+# acquire_camera_button = Button(frame1,text="COPY bookmark",bg="#BED5F4",command=acquire_bookmark,padx=10,pady=5).grid(row=2,column=0)
+# apply_camera_button = Button(frame2,text="APPLY bookmark",bg='#BEF4C2',command=apply_bookmark,padx=10,pady=5).grid(row=2,column=0)
+
+copy_1 = Button(frame1,text="Copy  1",bg="#BED5F4",command=lambda: copy_bookmark(1)).grid(row=3,column=1,padx=2,pady=4) # padding the button makes them bigger, padding the grid puts space between
+copy_2 = Button(frame1,text="Copy  2",bg="#BED5F4",command=lambda: copy_bookmark(2)).grid(row=3,column=2,padx=2,pady=4)
+copy_3 = Button(frame1,text="Copy  3",bg="#BED5F4",command=lambda: copy_bookmark(3)).grid(row=3,column=3,padx=2,pady=4)
+copy_4 = Button(frame1,text="Copy  4",bg="#BED5F4",command=lambda: copy_bookmark(4)).grid(row=3,column=4,padx=2,pady=4)
+copy_5 = Button(frame1,text="Copy  5",bg="#BED5F4",command=lambda: copy_bookmark(5)).grid(row=3,column=5,padx=2,pady=4)
+
+copy_6 = Button(frame1,text="Copy  6",bg="#BED5F4",command=lambda: copy_bookmark(6)).grid(row=4,column=1,padx=2,pady=4)
+copy_7 = Button(frame1,text="Copy  7",bg="#BED5F4",command=lambda: copy_bookmark(7)).grid(row=4,column=2,padx=2,pady=4)
+copy_8 = Button(frame1,text="Copy  8",bg="#BED5F4",command=lambda: copy_bookmark(8)).grid(row=4,column=3,padx=2,pady=4)
+copy_9 = Button(frame1,text="Copy  9",bg="#BED5F4",command=lambda: copy_bookmark(9)).grid(row=4,column=4,padx=2,pady=4)
+copy_10 = Button(frame1,text="Copy 10",bg="#BED5F4",command=lambda: copy_bookmark(10)).grid(row=4,column=5,padx=2,pady=2)
+
+apply_1 = Button(frame2,text="Apply  1",bg='#BEF4C2',command=lambda: paste_bookmark(1)).grid(row=3,column=1,padx=2,pady=4)
+apply_2 = Button(frame2,text="Apply  2",bg='#BEF4C2',command=lambda: paste_bookmark(2)).grid(row=3,column=2,padx=2,pady=4)
+apply_3 = Button(frame2,text="Apply  3",bg='#BEF4C2',command=lambda: paste_bookmark(3)).grid(row=3,column=3,padx=2,pady=4)
+apply_4 = Button(frame2,text="Apply  4",bg='#BEF4C2',command=lambda: paste_bookmark(4)).grid(row=3,column=4,padx=2,pady=4)
+apply_5 = Button(frame2,text="Apply  5",bg='#BEF4C2',command=lambda: paste_bookmark(5)).grid(row=3,column=5,padx=2,pady=4)
+
+apply_6 = Button(frame2,text="Apply  6",bg='#BEF4C2',command=lambda: paste_bookmark(6)).grid(row=4,column=1,padx=2,pady=4)
+apply_7 = Button(frame2,text="Apply  7",bg='#BEF4C2',command=lambda: paste_bookmark(7)).grid(row=4,column=2,padx=2,pady=4)
+apply_8 = Button(frame2,text="Apply  8",bg='#BEF4C2',command=lambda: paste_bookmark(8)).grid(row=4,column=3,padx=2,pady=4)
+apply_9 = Button(frame2,text="Apply  9",bg='#BEF4C2',command=lambda: paste_bookmark(9)).grid(row=4,column=4,padx=2,pady=4)
+apply_10 = Button(frame2,text="Apply 10",bg='#BEF4C2',command=lambda: paste_bookmark(10)).grid(row=4,column=5,padx=2,pady=2)
+
+
 
 gui.config(menu=menubar)
 gui.mainloop()
