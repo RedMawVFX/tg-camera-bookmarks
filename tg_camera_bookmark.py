@@ -10,7 +10,6 @@ def display_bookmarks():
     popup_info("Bookmark values",bookmarks)
 
 def reset_bookmarks():
-    # Python drops to global if local vars not defined
     global bookmarks
     bookmarks = [(default_position,default_rotation,default_focal)] * 10
     my_messages.set("Bookmarks reset to default values.")
@@ -27,8 +26,7 @@ def popup_help_file_menu():
 
 def popup_help_utility_menu():
     text = "Display bookmarks: Displays the current values assigned to all the bookmarks. \nRest bookmarks: Resets all bookmarks to default render camera values. \nReset bookmarks to zero: Resets all bookmark postion and rotation values to zero."  
-    popup_info("Help for Utility menu",text)  
-        
+    popup_info("Help for Utility menu",text)          
 
 gui = Tk()
 gui.title("tg_camera_bookmark")
@@ -41,18 +39,15 @@ gui.columnconfigure(3,weight=1)
 gui.columnconfigure(4,weight=1)
 gui.columnconfigure(5,weight=1)
 
-
 gui.rowconfigure(0,weight=0)
 gui.rowconfigure(1,weight=1)
 gui.rowconfigure(2,weight=1)
 gui.rowconfigure(3,weight=4)
 
-# frame0 = LabelFrame(gui,text="Select active bookmark")
 frame1 = LabelFrame(gui,text="Select camera to copy bookmark from")
 frame2 = LabelFrame(gui,text="Select camera to apply bookmark to")
 frame3 = LabelFrame(gui,text="Messages:",bg="#FFF9EC",relief=FLAT)
 
-# frame0.grid(row=0,column=0,sticky="WENS",padx=10,pady=10)
 frame1.grid(row=1, column=0,sticky="WENS",padx=10,pady=10)
 frame2.grid(row=2, column=0,sticky="WENS",padx=10,pady=10)
 frame3.grid(row=3,column=0,sticky="WENS",padx=10,pady=10)
@@ -114,7 +109,6 @@ def add_camera():
 def create_camera_dictionary(ids):
     camera_dictionary.clear()
     for nodes in ids:
-        # print ("nodes ",nodes)
         try:
             camera_dictionary[str(nodes)]= tg.name(nodes)
         except ConnectionError as e:
@@ -182,13 +176,7 @@ def set_camera_params(cam,book):
     except tg.ReplyError as e:
         popup_message(3,str(e))
     except tg.ApiError:
-        popup_message(4,str(e))
-    
-def print_bookmark_data(x,y,z): # old
-    for i in range(10):
-       print ("position is ",x)
-       print ("rotaion is ",y)
-       print ("focual is ",z)
+        popup_message(4,str(e))    
 
 def apply_bookmark():    
     rb_selection = bookmark_rb.get()    
@@ -208,8 +196,7 @@ def load_bookmarks_from_disk():
     global bookmarks
     presets_from_disk = read_from_file()    
     formatted_presets = format_presets_from_disk(presets_from_disk)    
-    bookmarks = formatted_presets   
-    
+    bookmarks = formatted_presets       
 
 def format_presets_from_disk(presets):
     converted_string = str(presets)
@@ -225,21 +212,18 @@ def read_from_file():
     file.close()
     return content
 
-def copy_bookmark(x):
-    # print("x is ",x)
+def copy_bookmark(x):    
     bookmark_rb.set(x)
     camera_selection = acquire_from_camera.get()
     selected_camera_position, selected_camera_rotation, selected_camera_focal = get_camera_params(camera_selection)    
     camera_params_as_string = str(selected_camera_position),str(selected_camera_rotation),str(selected_camera_focal)    
     bookmarks[x-1] = camera_params_as_string
-    # print("copy ",x," ",camera_selection)
     build_message("acquire",x,camera_selection) 
 
 def paste_bookmark(x):     
     camera_selection = apply_to_camera.get()    
     set_camera_params(camera_selection,x-1)
     build_message("apply",x-1,camera_selection) 
-
 
 # variables
 camera_dictionary = {}
@@ -269,42 +253,22 @@ utilitymenu.add_command(label="Reset bookmarks to zero",command=reset_bookmarks_
 menubar.add_cascade(label="Utility",menu=utilitymenu)
 
 helpmenu = Menu(menubar,tearoff=0)
-# At a later date, combine these help options into a single function or two
 helpmenu.add_command(label="For file menu",command=popup_help_file_menu)
 helpmenu.add_command(label="For utility menu",command=popup_help_utility_menu)
 menubar.add_cascade(label="Help",menu=helpmenu)
 
 # main
 camera_ids = get_cameras()
-# print(camera_ids)
 if not camera_ids:
     popup_add_camera("Add Camera","Add Camera node to project?")
     camera_ids = get_cameras()
     if not camera_ids:
         quit()
+
 # build camera dictionary
 create_camera_dictionary(camera_ids)
 
-# radio buttons
-'''
-bookmark_01_rb = Radiobutton(frame0,text="Bookmark 01",variable=bookmark_rb,value=1,command=set_bookmark_rb).grid(row=0,column=0)
-bookmark_02_rb = Radiobutton(frame0,text="Bookmark 02",variable=bookmark_rb,value=2,command=set_bookmark_rb).grid(row=0,column=1)
-bookmark_03_rb = Radiobutton(frame0,text="Bookmark 03",variable=bookmark_rb,value=3,command=set_bookmark_rb).grid(row=0,column=2)
-bookmark_04_rb = Radiobutton(frame0,text="Bookmark 04",variable=bookmark_rb,value=4,command=set_bookmark_rb).grid(row=0,column=3)
-bookmark_05_rb = Radiobutton(frame0,text="Bookmark 05",variable=bookmark_rb,value=5,command=set_bookmark_rb).grid(row=0,column=4)
-
-bookmark_06_rb = Radiobutton(frame0,text="Bookmark 06",variable=bookmark_rb,value=6,command=set_bookmark_rb).grid(row=1,column=0)
-bookmark_07_rb = Radiobutton(frame0,text="Bookmark 07",variable=bookmark_rb,value=7,command=set_bookmark_rb).grid(row=1,column=1)
-bookmark_08_rb = Radiobutton(frame0,text="Bookmark 08",variable=bookmark_rb,value=8,command=set_bookmark_rb).grid(row=1,column=2)
-bookmark_09_rb = Radiobutton(frame0,text="Bookmark 09",variable=bookmark_rb,value=9,command=set_bookmark_rb).grid(row=1,column=3)
-bookmark_10_rb = Radiobutton(frame0,text="Bookmark 10",variable=bookmark_rb,value=10,command=set_bookmark_rb).grid(row=1,column=4)
-'''
-
-
 # labels and combobox
-# acquire_instructions = Label(frame1,text='Select camera or refresh list.',relief = FLAT,padx=20,pady=10).grid(row = 0,column=3,columnspan=2,sticky='e')
-# apply_instructions = Label(frame2,text='Select camera or refresh list.',relief = FLAT,padx=20,pady=10).grid(row = 0,column=3,sticky='e')
-
 acquire_camera_cb = ttk.Combobox(frame1,textvariable=acquire_from_camera,postcommand=update_combobox_cameras)
 acquire_camera_cb["values"] = list(camera_dictionary.values())
 acquire_camera_cb.current(0)
@@ -321,9 +285,6 @@ null_02 = Label(frame2,text=" ").grid(row=3,columnspan=2)
 info_message = Label(frame3,textvariable=my_messages,fg='red',bg="#FFF9EC",padx=4).grid(row=0,columnspan=2,sticky='wens')
 
 # buttons
-# acquire_camera_button = Button(frame1,text="COPY bookmark",bg="#BED5F4",command=acquire_bookmark,padx=10,pady=5).grid(row=2,column=0)
-# apply_camera_button = Button(frame2,text="APPLY bookmark",bg='#BEF4C2',command=apply_bookmark,padx=10,pady=5).grid(row=2,column=0)
-
 copy_1 = Button(frame1,text="Copy  1",bg="#BED5F4",command=lambda: copy_bookmark(1)).grid(row=3,column=1,padx=2,pady=4) # padding the button makes them bigger, padding the grid puts space between
 copy_2 = Button(frame1,text="Copy  2",bg="#BED5F4",command=lambda: copy_bookmark(2)).grid(row=3,column=2,padx=2,pady=4)
 copy_3 = Button(frame1,text="Copy  3",bg="#BED5F4",command=lambda: copy_bookmark(3)).grid(row=3,column=3,padx=2,pady=4)
@@ -347,7 +308,6 @@ apply_7 = Button(frame2,text="Apply  7",bg='#BEF4C2',command=lambda: paste_bookm
 apply_8 = Button(frame2,text="Apply  8",bg='#BEF4C2',command=lambda: paste_bookmark(8)).grid(row=4,column=3,padx=2,pady=4)
 apply_9 = Button(frame2,text="Apply  9",bg='#BEF4C2',command=lambda: paste_bookmark(9)).grid(row=4,column=4,padx=2,pady=4)
 apply_10 = Button(frame2,text="Apply 10",bg='#BEF4C2',command=lambda: paste_bookmark(10)).grid(row=4,column=5,padx=2,pady=2)
-
 
 
 gui.config(menu=menubar)
