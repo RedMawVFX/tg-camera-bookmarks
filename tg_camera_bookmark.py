@@ -6,8 +6,15 @@ from tkinter.filedialog import askopenfile
 import re
 import terragen_rpc as tg
 
-def display_bookmarks():    
-    popup_info("Bookmark values",bookmarks)
+def display_bookmarks():
+    formatted_for_popup = format_bookmarks()    
+    popup_info("Current bookmark values",formatted_for_popup)
+
+def format_bookmarks():
+    formatted_text = ""
+    for items in bookmarks:
+        formatted_text  = formatted_text + str(items) + ' \n'
+    return (formatted_text)
 
 def reset_bookmarks():
     global bookmarks
