@@ -316,6 +316,5 @@ apply_8 = Button(frame2,text="Apply  8",bg='#BEF4C2',command=lambda: paste_bookm
 apply_9 = Button(frame2,text="Apply  9",bg='#BEF4C2',command=lambda: paste_bookmark(9)).grid(row=4,column=4,padx=2,pady=4)
 apply_10 = Button(frame2,text="Apply 10",bg='#BEF4C2',command=lambda: paste_bookmark(10)).grid(row=4,column=5,padx=2,pady=2)
 
-
 gui.config(menu=menubar)
 gui.mainloop()
