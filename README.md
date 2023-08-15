@@ -1,5 +1,7 @@
 # tg-camera-bookmarks
 
+![Example of bookmark camera views](images/tg_camera_bookmarks_composition.jpg)
+
 A fully functional Python script implementing Terragen 4 Professional’s remote procedure call (RPC) feature to allow the user to “bookmark” a camera’s point of view and later recall it, even from disk. 
 
 Any camera’s “position”, “rotation” and “focal length in mm” parameters may be stored to one of ten preset caches where they can then be applied to any other camera in the project.  Caches can be saved or loaded from disk, allowing the user to create a series of presets.
