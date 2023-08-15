@@ -17,31 +17,38 @@ Select a camera from the “Apply bookmark” dropdown list and click one of the
 * The bookmark values are applied to the selected camera for the current frame, temporarily overwriting the previous values.  
 * Scrubbing the timeline or changing the frame reverts the values back to their original values.
 
+### File menu
+
 ![File menu options](/images/tg_camera_bookmark_file_menu.jpg)
 
-**File menu > Open bookmarks:** Select this option and choose a bookmark file to populate the ten preset caches in memory.
+* Open bookmarks: Select this option and choose a bookmark file to populate the ten preset caches in memory.
 
-**File menu > Save bookmarks:** Select this option to save the ten preset cache values in memory to disk.
+* Save bookmarks: Select this option to save the ten preset cache values in memory to disk.
+
+### Utility menu
 
 ![Utility menu options](/images/tg_camera_bookmark_utility_menu.jpg)
 
-**Utility > Display bookmarks:** Displays the current values currently assigned to the ten preset caches.
+* Display bookmarks: Displays the current values currently assigned to the ten preset caches.
 
 ![Display the current bookmark values](/images/tg_camera_bookmark_Display_Bookmarks.jpg)
 
-**Utility > Reset bookmarks:** Resets the ten preset cache values to the default Terragen camera values.  Position is set to 0,10,-30 on the XYZ axis.  Rotation is set to -7 degrees for Pitch, and zero degrees for Heading and Bank.  Camera focal length is set to 31.17 mm.
+* Reset bookmarks: Resets the ten preset cache values to the default Terragen camera values.  Position is set to 0,10,-30 on the XYZ axis.  Rotation is set to -7 degrees for Pitch, and zero degrees for Heading and Bank.  Camera focal length is set to 31.17 mm.
 
-**Utility > Reset  bookmarks to zero**: Resets all ten preset cache values in memory.  Position is set to the origin of the project, i.e. 0,0,0 on the XYZ axis.  Rotation is set to zero degrees for Pitch, Heading, and Bank.   Camera focal length is set to Terragen’s default camera of 31.17 mm.
+* Reset bookmarks to zero: Resets all ten preset cache values in memory.  Position is set to the origin of the project, i.e. 0,0,0 on the XYZ axis.  Rotation is set to zero degrees for Pitch, Heading, and Bank.   Camera focal length is set to Terragen’s default camera of 31.17 mm.
+
+
+### Help menu
 
 ![Help menu options](/images/tg_camera_bookmark_help_menu.jpg)
 
-**Help > For file menu:** Displays help information for the dropdown menu options under the File menu.
+* For file menu: Displays help information for the dropdown menu options under the File menu.
  
-**Help > For utility menu:**  Displays help information for the dropdown menu options under the Utility menu.
+* For utility menu:  Displays help information for the dropdown menu options under the Utility menu.
 
 
-**Known issues:** <br>
-Would be nice to associate a user defined descriptive label for each cache/preset.
+### Known issues:
+* Would be nice to associate a user defined descriptive label for each cache/preset.
 
 ### Reference: <br>
 terragen-rpc <br>
