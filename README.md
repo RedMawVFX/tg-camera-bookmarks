@@ -1,10 +1,25 @@
 # tg-camera-bookmarks
-
-![Example of bookmark camera views](images/tg_camera_bookmarks_composition.jpg)
-
 A fully functional Python script implementing Terragen 4 Professional’s remote procedure call (RPC) feature to allow the user to “bookmark” a camera’s point of view and later recall it, even from disk. 
 
 Any camera’s “position”, “rotation” and “focal length in mm” parameters may be stored to one of ten preset caches where they can then be applied to any other camera in the project.  Caches can be saved or loaded from disk, allowing the user to create a series of presets.
+
+![Example of bookmark camera views](images/tg_camera_bookmarks_composition.jpg)
+
+### Requirements:
+
+Terragen 4 Professional v4.6.31 <br>
+https://planetside.co.uk/
+
+terragen-rpc <br>
+https://github.com/planetside-software/terragen-rpc
+
+### Installation:
+
+Make sure you’ve installed Terragen 4 Professional v4.6.31 or greater on your computer, and installed the terragen_rpc module via the pip install command.
+
+In this repository you’ll find the Python script “tg_camera_bookmarks.py” and supporting example content.  This includes several Terragen 4 project files (.tgd) and preset “bookmark” text files (.txt); as well as assorted low-res 3D assets located in the Project_Assets folder. The images folder contains an icon file, should you wish to create a shortcut on your desktop for the python script.
+
+
 ### Usage:
 
 ![tg_camera_bookmarks GUI](images/tg_camera_bookmark_gui.jpg)
@@ -51,8 +66,6 @@ Select a camera from the “Apply bookmark” dropdown list and click one of the
 * Would be nice to associate a user defined descriptive label for each cache/preset.
 
 ### Reference: <br>
-terragen-rpc <br>
-https://github.com/planetside-software/terragen-rpc
 
 Online documentation for Terragen RPC <br>
 https://planetside.co.uk/docs/terragen-rpc/
@@ -61,5 +74,4 @@ Blog posts on using Terragen RPC <br>
 https://planetside.co.uk/blog/hello-rpc-part-1-scripting-for-terragen/ <br>
 https://planetside.co.uk/blog/hello-rpc-part-2-error-handling/
 
-Terragen 4 <br>
-https://planetside.co.uk/
+
