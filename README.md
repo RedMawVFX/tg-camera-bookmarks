@@ -1,4 +1,9 @@
 # tg-camera-bookmarks
+&#9888; This Python script is now part of the <b>redmaw-tg-toolkit</b> repository, and will no longer be developed as a stand-alone script in this repository.
+
+Click [here](https://github.com/RedMawVFX/redmaw-tg-toolkit) for the redmaw-tg-toolkit repository.<br> 
+Click [here](https://github.com/RedMawVFX/redmaw-tg-toolkit/tree/main/scripts/tg-camera-bookmarks) to go directly to the <i>tg-camera-bookmarks</i> folder in the redmaw-tg-toolkit.
+<hr>
 A fully functional Python script implementing Terragen 4 Professional’s remote procedure call (RPC) feature to allow the user to “bookmark” a camera’s point of view and later recall it, even from disk. 
 
 Any camera’s “position”, “rotation” and “focal length in mm” parameters may be stored to one of ten preset caches where they can then be applied to any other camera in the project.  Caches can be saved or loaded from disk, allowing the user to create a series of presets.
